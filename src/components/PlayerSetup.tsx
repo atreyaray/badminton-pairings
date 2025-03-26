@@ -47,7 +47,7 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
       
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold mb-4 text-[#222222]">Add Players</h2>
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
             type="text"
             value={newPlayerName}
@@ -58,9 +58,9 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
           />
           <button
             onClick={addPlayer}
-            className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E61E4D] focus:outline-none focus:ring-2 focus:ring-[#FF385C]"
+            className="px-6 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E61E4D] focus:outline-none focus:ring-2 focus:ring-[#FF385C] whitespace-nowrap"
           >
-            Add
+            Add Player
           </button>
         </div>
 
