@@ -188,7 +188,6 @@ function generateDoublesMatches(
     });
   } else if (players.length === 5) {
     // 2v2 with one player sitting out (choose the player who has played the most)
-    const sittingOut = sortedPlayers[4];
     matches.push({
       id: crypto.randomUUID(),
       players: [sortedPlayers[0], sortedPlayers[1], sortedPlayers[2], sortedPlayers[3]],
