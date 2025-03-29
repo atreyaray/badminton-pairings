@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Player, Match, Session } from '../types'
-import { generateSession, generateNextRound, getCurrentRound } from '../utils/matchGenerator'
+import { generateNextRound } from '../utils/matchGenerator'
 
 interface MatchesPageProps {
   initialSession: Session;

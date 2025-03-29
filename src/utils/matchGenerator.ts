@@ -124,7 +124,6 @@ function findOptimalPairing(
 }
 
 function generateRound(
-  players: Player[],
   numberOfCourts: number,
   playerHistories: Map<string, PlayerHistory>
 ): Match[] {
@@ -138,7 +137,7 @@ function generateRound(
   );
 
   if (selectedPlayers.length < playersNeeded) {
-    return roundMatches; // Not enough players for a full round
+    throw new Error(`Not enough players available. Need ${playersNeeded} players for ${numberOfCourts} courts.`);
   }
 
   // Shuffle all selected players together before distributing to courts
@@ -191,7 +190,7 @@ export function generateSession(
   });
 
   // Generate first round of matches
-  const matches = generateRound(players, numberOfCourts, globalPlayerHistories);
+  const matches = generateRound(numberOfCourts, globalPlayerHistories);
 
   return {
     players,
@@ -214,7 +213,7 @@ export function generateNextRound(
   currentRound++;
 
   // Generate next round of matches
-  return generateRound(players, numberOfCourts, globalPlayerHistories);
+  return generateRound(numberOfCourts, globalPlayerHistories);
 }
 
 // Get the current round number
