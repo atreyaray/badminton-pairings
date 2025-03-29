@@ -200,7 +200,6 @@ export function generateSession(
 }
 
 export function generateNextRound(
-  players: Player[],
   numberOfCourts: number,
   completedMatches: Match[]
 ): Match[] {

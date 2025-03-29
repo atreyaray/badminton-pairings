@@ -105,7 +105,6 @@ export function MatchesPage({ initialSession }: MatchesPageProps) {
 
     // Generate next round of matches
     const nextRoundMatches = generateNextRound(
-      session.players,
       session.numberOfCourts,
       allCompletedMatches
     );
