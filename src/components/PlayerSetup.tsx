@@ -12,11 +12,23 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
   const [numberOfCourts, setNumberOfCourts] = useState(1)
   const [error, setError] = useState<string | null>(null)
 
+  const showTemporaryError = (message: string) => {
+    setError(message);
+    setTimeout(() => {
+      setError(null);
+    }, 5000);
+  };
+
   const addPlayer = () => {
-    if (newPlayerName.trim()) {
+    const trimmedName = newPlayerName.trim();
+    if (trimmedName) {
+      if (players.some(player => player.name.toLowerCase() === trimmedName.toLowerCase())) {
+        showTemporaryError(`${trimmedName} is already in the list`);
+        return;
+      }
       const newPlayer: Player = {
         id: crypto.randomUUID(),
-        name: newPlayerName.trim()
+        name: trimmedName
       }
       setPlayers([...players, newPlayer])
       setNewPlayerName('')
@@ -25,14 +37,16 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
   }
 
   const addPlayerByName = (name: string) => {
-    if (!players.some(player => player.name === name)) {
-      const newPlayer: Player = {
-        id: crypto.randomUUID(),
-        name
-      }
-      setPlayers([...players, newPlayer])
-      setError(null)
+    if (players.some(player => player.name.toLowerCase() === name.toLowerCase())) {
+      showTemporaryError(`${name} is already in the list`);
+      return;
     }
+    const newPlayer: Player = {
+      id: crypto.randomUUID(),
+      name
+    }
+    setPlayers([...players, newPlayer])
+    setError(null)
   }
 
   const removePlayer = (playerId: string) => {
@@ -80,6 +94,12 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
             Add Player
           </button>
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200">
+            {error}
+          </div>
+        )}
 
         {/* Quick add player buttons */}
         <div className="mb-6">
@@ -143,13 +163,13 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
               </button>
             </div>
           ))}
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200">
-            {error}
+          <div className="mt-4 p-3 bg-white border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-center">
+              <span className="text-[#222222] font-medium">Total Players</span>
+              <span className="text-[#FF385C] font-semibold">{players.length}</span>
+            </div>
           </div>
-        )}
+        </div>
 
         <button
           onClick={generateMatches}
