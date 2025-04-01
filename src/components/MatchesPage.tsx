@@ -94,39 +94,78 @@ export function MatchesPage({ initialSession }: MatchesPageProps) {
     )
   }
 
-  const handleRoundComplete = () => {
-    // Check if all matches in the current round are completed
-    const currentRoundMatches = matchStates.filter(ms => ms.round === currentRound);
-    const allMatchesCompleted = currentRoundMatches.every(ms => ms.completed);
-    
-    if (!allMatchesCompleted) {
-      return; // Don't proceed if not all matches are completed
+  const handleRoundComplete = (isRandomRefresh: boolean = false) => {
+    if (isRandomRefresh) {
+      // For refresh, generate new matches for the current round
+      const currentRoundMatches = matchStates.filter(ms => ms.round === currentRound);
+      const nextRoundMatches = generateNextRound(
+        session.numberOfCourts,
+        allCompletedMatches,
+        true
+      );
+
+      // Remove current round matches from session and match states
+      setSession(prev => ({
+        ...prev,
+        matches: prev.matches.filter(match => 
+          !currentRoundMatches.some(ms => ms.match.id === match.id)
+        )
+      }));
+
+      setMatchStates(prev => 
+        prev.filter(ms => ms.round !== currentRound)
+      );
+
+      // Add new matches for current round
+      setSession(prev => ({
+        ...prev,
+        matches: [...prev.matches, ...nextRoundMatches]
+      }));
+
+      // Create new match states for the current round
+      const newMatchStates = nextRoundMatches.map(match => ({
+        match,
+        completed: false,
+        round: currentRound
+      }));
+
+      // Add new match states
+      setMatchStates(prev => [...prev, ...newMatchStates]);
+    } else {
+      // For starting next round, check if all matches are completed
+      const currentRoundMatches = matchStates.filter(ms => ms.round === currentRound);
+      const allMatchesCompleted = currentRoundMatches.every(ms => ms.completed);
+      
+      if (!allMatchesCompleted) {
+        return; // Don't proceed if not all matches are completed
+      }
+
+      // Generate next round of matches
+      const nextRoundMatches = generateNextRound(
+        session.numberOfCourts,
+        allCompletedMatches,
+        false
+      );
+
+      // Update session with new matches
+      setSession(prev => ({
+        ...prev,
+        matches: [...prev.matches, ...nextRoundMatches]
+      }));
+
+      // Create new match states for the next round
+      const newMatchStates = nextRoundMatches.map(match => ({
+        match,
+        completed: false,
+        round: currentRound + 1
+      }));
+
+      // Add new match states
+      setMatchStates(prev => [...prev, ...newMatchStates]);
+      
+      // Increment current round
+      setCurrentRound(prev => prev + 1);
     }
-
-    // Generate next round of matches
-    const nextRoundMatches = generateNextRound(
-      session.numberOfCourts,
-      allCompletedMatches
-    );
-
-    // Update session with new matches
-    setSession(prev => ({
-      ...prev,
-      matches: [...prev.matches, ...nextRoundMatches]
-    }));
-
-    // Create new match states for the next round
-    const newMatchStates = nextRoundMatches.map(match => ({
-      match,
-      completed: false,
-      round: currentRound + 1
-    }));
-
-    // Add new match states
-    setMatchStates(prev => [...prev, ...newMatchStates]);
-    
-    // Increment current round
-    setCurrentRound(prev => prev + 1);
   }
 
   const handleUndo = () => {
@@ -205,13 +244,25 @@ export function MatchesPage({ initialSession }: MatchesPageProps) {
             <div key={round} className="mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-[#222222]">Round {round}</h3>
-                {roundMatches.every(ms => ms.completed) && parseInt(round) === currentRound && (
-                  <button
-                    onClick={handleRoundComplete}
-                    className="text-sm bg-[#FF385C] text-white px-4 py-2 rounded-lg hover:bg-[#E61E4D] transition-colors duration-200"
-                  >
-                    Start Next Round
-                  </button>
+                {parseInt(round) === currentRound && (
+                  <div className="flex gap-2">
+                    {!roundMatches.every(ms => ms.completed) && (
+                      <button
+                        onClick={() => handleRoundComplete(true)}
+                        className="text-sm bg-white text-[#FF385C] px-4 py-2 rounded-lg border border-[#FF385C] hover:bg-[#FFF8F6] transition-colors duration-200"
+                      >
+                        Refresh Round
+                      </button>
+                    )}
+                    {roundMatches.every(ms => ms.completed) && (
+                      <button
+                        onClick={() => handleRoundComplete(false)}
+                        className="text-sm bg-[#FF385C] text-white px-4 py-2 rounded-lg hover:bg-[#E61E4D] transition-colors duration-200"
+                      >
+                        Start Next Round
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
               

@@ -125,16 +125,27 @@ function findOptimalPairing(
 
 function generateRound(
   numberOfCourts: number,
-  playerHistories: Map<string, PlayerHistory>
+  playerHistories: Map<string, PlayerHistory>,
+  isRandomRefresh: boolean = false
 ): Match[] {
   const roundMatches: Match[] = [];
   const playersNeeded = numberOfCourts * 4;
 
-  // Select all players needed for this round at once
-  const selectedPlayers = findLeastPlayedPlayers(
-    playerHistories,
-    playersNeeded
-  );
+  // Select players based on whether it's a random refresh or not
+  let selectedPlayers: Player[];
+  if (isRandomRefresh) {
+    // For random refresh, select from all available players
+    selectedPlayers = Array.from(playerHistories.values())
+      .map(history => history.player)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, playersNeeded);
+  } else {
+    // Normal selection based on least played players
+    selectedPlayers = findLeastPlayedPlayers(
+      playerHistories,
+      playersNeeded
+    );
+  }
 
   if (selectedPlayers.length < playersNeeded) {
     throw new Error(`Not enough players available. Need ${playersNeeded} players for ${numberOfCourts} courts.`);
@@ -201,7 +212,8 @@ export function generateSession(
 
 export function generateNextRound(
   numberOfCourts: number,
-  completedMatches: Match[]
+  completedMatches: Match[],
+  isRandomRefresh: boolean = false
 ): Match[] {
   // Update histories with completed matches
   completedMatches.forEach((match) => {
@@ -212,7 +224,7 @@ export function generateNextRound(
   currentRound++;
 
   // Generate next round of matches
-  return generateRound(numberOfCourts, globalPlayerHistories);
+  return generateRound(numberOfCourts, globalPlayerHistories, isRandomRefresh);
 }
 
 // Get the current round number
