@@ -104,14 +104,28 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Number of Courts
           </label>
-          <select
-            value={numberOfCourts}
-            onChange={(e) => setNumberOfCourts(Number(e.target.value))}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:border-transparent"
-          >
-            <option value={1}>1 Court</option>
-            <option value={2}>2 Courts</option>
-          </select>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setNumberOfCourts(1)}
+              className={`px-4 py-2 rounded-lg border ${
+                numberOfCourts === 1
+                  ? 'bg-[#FF385C] text-white border-[#FF385C]'
+                  : 'bg-white border-gray-300 text-[#222222] hover:bg-[#FFF8F6] hover:border-[#FF385C] hover:text-[#FF385C]'
+              } focus:outline-none focus:ring-2 focus:ring-[#FF385C] transition-all duration-200 transform hover:scale-105`}
+            >
+              1 Court
+            </button>
+            <button
+              onClick={() => setNumberOfCourts(2)}
+              className={`px-4 py-2 rounded-lg border ${
+                numberOfCourts === 2
+                  ? 'bg-[#FF385C] text-white border-[#FF385C]'
+                  : 'bg-white border-gray-300 text-[#222222] hover:bg-[#FFF8F6] hover:border-[#FF385C] hover:text-[#FF385C]'
+              } focus:outline-none focus:ring-2 focus:ring-[#FF385C] transition-all duration-200 transform hover:scale-105`}
+            >
+              2 Courts
+            </button>
+          </div>
         </div>
 
         <div className="space-y-2 mb-4">
