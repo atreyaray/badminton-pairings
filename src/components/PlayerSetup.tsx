@@ -24,6 +24,17 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
     }
   }
 
+  const addPlayerByName = (name: string) => {
+    if (!players.some(player => player.name === name)) {
+      const newPlayer: Player = {
+        id: crypto.randomUUID(),
+        name
+      }
+      setPlayers([...players, newPlayer])
+      setError(null)
+    }
+  }
+
   const removePlayer = (playerId: string) => {
     setPlayers(players.filter(player => player.id !== playerId))
     setError(null)
@@ -38,6 +49,12 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
       setError(err instanceof Error ? err.message : 'Failed to generate matches')
     }
   }
+
+  // Common players
+  const commonPlayers = [
+    'Ray', 'Selin', 'Long', 'Aayush',
+    'Ankita', 'Rajat', 'Vivaan', 'Michael'
+  ];
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -62,6 +79,25 @@ export function PlayerSetup({ onSessionGenerated }: PlayerSetupProps) {
           >
             Add Player
           </button>
+        </div>
+
+        {/* Quick add player buttons */}
+        <div className="mb-6">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Quick Add Players</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {commonPlayers.filter(name => name).map((name) => (
+              <button
+                key={name}
+                onClick={() => addPlayerByName(name)}
+                className="px-4 py-2 bg-white border border-gray-300 text-[#222222] rounded-lg 
+                          hover:bg-[#FFF8F6] hover:border-[#FF385C] hover:text-[#FF385C] 
+                          focus:outline-none focus:ring-2 focus:ring-[#FF385C] 
+                          transition-all duration-200 transform hover:scale-105"
+              >
+                {name}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mb-4">
